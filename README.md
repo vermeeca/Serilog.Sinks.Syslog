@@ -13,6 +13,6 @@ Log.Logger = new LoggerConfiguration()
 ### Options
 Only two options are required: `syslogserver` and `port`.
 
-Two other options are optional:
+Two others are optional:
 * `batchsize` : The default batch size of messages that the serilog sink should send.
 * `batchPeriodInSeconds` : The interval (in seconds) after which the sink should flush.
