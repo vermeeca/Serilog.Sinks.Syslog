@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Serilog.Sinks.Syslog</id>
+    <version>1.0.0</version>
+    <title>Serilog Syslog Sink</title>
+    <authors>Craig Vermeer</authors>
+    <owners>Craig Vermeer</owners>
+    <licenseUrl>https://raw.githubusercontent.com/vermeeca/Serilog.Sinks.Syslog/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/vermeeca/Serilog.Sinks.Syslog</projectUrl>
+    <description>Sends Serilog events to Syslog</description>
+    <copyright>Copyright 2016</copyright>
+  </metadata>
+</package>
