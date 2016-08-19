@@ -1,4 +1,4 @@
-namespace Axon.Logging
+namespace Serilog.Sinks.Syslog
 {
     public enum SyslogFacility
     {

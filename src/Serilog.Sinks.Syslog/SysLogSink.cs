@@ -7,12 +7,10 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Serilog.Events;
 using Serilog.Sinks.PeriodicBatching;
 
-namespace Axon.Logging
+namespace Serilog.Sinks.Syslog
 {
     public class SyslogSink : PeriodicBatchingSink
     {

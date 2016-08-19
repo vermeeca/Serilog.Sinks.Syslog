@@ -1,8 +1,7 @@
 ﻿using System;
-using Serilog;
 using Serilog.Configuration;
 
-namespace Axon.Logging
+namespace Serilog.Sinks.Syslog
 {
     public static class SysLogExtensions
     {
