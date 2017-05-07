@@ -57,12 +57,13 @@ namespace Serilog.Sinks.Syslog
         /// <summary>
         /// Initializes a new instance of the Syslog class
         /// </summary>
-        public SyslogSink(int batchSizeLimit, TimeSpan period, string sysLogServer, int port) : base(batchSizeLimit, period)
+        public SyslogSink(int batchSizeLimit, TimeSpan period, string sysLogServer, int port,
+            [System.Runtime.CompilerServices.CallerMemberName] string sender = "") : base(batchSizeLimit, period)
         {
             // Sensible defaults...
             this.SyslogServer = sysLogServer;
             this.Port = port;
-            this.Sender = Assembly.GetCallingAssembly().GetName().Name;
+            this.Sender = sender;
             this.Facility = SyslogFacility.Local1;
             this.Protocol = ProtocolType.Udp;
             this.MachineName = Dns.GetHostName();
@@ -107,24 +108,25 @@ namespace Serilog.Sinks.Syslog
         /// <param name="useSsl">Specify if SSL should be used</param>
         private static void SendMessage(string logServer, int port, byte[] msg, ProtocolType protocol, bool useSsl = false)
         {
-            var logServerIp = Dns.GetHostAddresses(logServer).FirstOrDefault();
+            var logServerIp = Dns.GetHostAddressesAsync(logServer).GetAwaiter().GetResult().FirstOrDefault();
             if (logServerIp == null)
             {
                 return;
             }
-
-            var ipAddress = logServerIp.ToString();
+            var endpoint = new IPEndPoint(logServerIp, port);
             switch (protocol)
             {
                 case ProtocolType.Udp:
-                    using (var udp = new UdpClient(ipAddress, port))
+                    
+                    using (var udp = new UdpClient(port))
                     {
-                        udp.Send(msg, msg.Length);
+                        udp.SendAsync(msg, msg.Length, endpoint).GetAwaiter().GetResult();
                     }
                     break;
                 case ProtocolType.Tcp:
-                    using (var tcp = new TcpClient(ipAddress, port))
+                    using (var tcp = new TcpClient())
                     {
+                        tcp.ConnectAsync(logServerIp, port).GetAwaiter().GetResult();
                         // disposition of tcp also disposes stream
                         var stream = tcp.GetStream();
                         if (useSsl)
@@ -132,7 +134,7 @@ namespace Serilog.Sinks.Syslog
                             // leave stream open so that we don't double dispose
                             using (var sslStream = new SslStream(stream, true))
                             {
-                                sslStream.AuthenticateAsClient(logServer);
+                                sslStream.AuthenticateAsClientAsync(logServer).GetAwaiter().GetResult();
                                 sslStream.Write(msg, 0, msg.Length);
                             }
                         }
@@ -140,6 +142,7 @@ namespace Serilog.Sinks.Syslog
                         {
                             stream.Write(msg, 0, msg.Length);
                         }
+                        stream.Flush();
                     }
 
                     break;
