@@ -118,7 +118,7 @@ namespace Serilog.Sinks.Syslog
             {
                 case ProtocolType.Udp:
                     
-                    using (var udp = new UdpClient(endpoint))
+                    using (var udp = new UdpClient(port))
                     {
                         udp.SendAsync(msg, msg.Length, endpoint).GetAwaiter().GetResult();
                     }
@@ -126,6 +126,7 @@ namespace Serilog.Sinks.Syslog
                 case ProtocolType.Tcp:
                     using (var tcp = new TcpClient())
                     {
+                        tcp.ConnectAsync(logServerIp, port).GetAwaiter().GetResult();
                         // disposition of tcp also disposes stream
                         var stream = tcp.GetStream();
                         if (useSsl)
@@ -141,6 +142,7 @@ namespace Serilog.Sinks.Syslog
                         {
                             stream.Write(msg, 0, msg.Length);
                         }
+                        stream.Flush();
                     }
 
                     break;
