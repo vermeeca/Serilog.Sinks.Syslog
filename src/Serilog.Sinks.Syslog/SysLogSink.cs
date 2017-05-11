@@ -82,9 +82,9 @@ namespace Serilog.Sinks.Syslog
         }
 
         /// <summary>
-        /// This is where we hook into NLog, by overriding the Write method. 
+        /// This is where we write a batch of events from the PeriodicBatchingSink. 
         /// </summary>
-        /// <param name="logEvent">The NLog.LogEventInfo </param>
+        /// <param name="events">The Serilog log events</param>
         protected override void EmitBatch(IEnumerable<LogEvent> events)
         {
             foreach (var logEvent in events)
@@ -152,10 +152,10 @@ namespace Serilog.Sinks.Syslog
         }
 
         /// <summary>
-        /// Mapping between NLog levels and syslog severity levels as they are not exactly one to one. 
+        /// Mapping between Serilog levels and syslog severity levels as they are not exactly one to one. 
         /// </summary>
-        /// <param name="logLevel">NLog log level to translate</param>
-        /// <returns>SyslogSeverity which corresponds to the NLog level. </returns>
+        /// <param name="logLevel">Serilog log level to translate</param>
+        /// <returns>SyslogSeverity which corresponds to the Serilog level. </returns>
         private static SyslogSeverity GetSyslogSeverity(LogEventLevel logLevel)
         {
             if (logLevel == LogEventLevel.Fatal)
